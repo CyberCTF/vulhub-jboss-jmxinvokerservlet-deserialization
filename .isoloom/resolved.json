@@ -1,0 +1,144 @@
+{
+  "generated_by_isoloom": "from isoloom.yml; don't edit: change the spec and run `isoloom generate` (`isoloom check` fails when this file is out of date)",
+  "resolved_version": 1,
+  "name": "vulhub-jboss-jmxinvokerservlet-deserialization",
+  "instance": null,
+  "inputs": [],
+  "networks": {
+    "lab": {
+      "cidr": "10.61.41.0/24",
+      "docker_cidr": "10.61.41.0/24",
+      "internet": false,
+      "gateway": null,
+      "gateway_address": "10.61.41.1",
+      "router": null,
+      "controller": "10.61.41.253"
+    }
+  },
+  "reach": [],
+  "machines": {
+    "jboss": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.61.41.10"
+      },
+      "docker_addresses": {
+        "lab": "10.61.41.10"
+      },
+      "services": [
+        {
+          "port": 8080,
+          "name": "web",
+          "http": true,
+          "publish": 8080
+        }
+      ],
+      "depends_on": [],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 1024,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    }
+  },
+  "start_order": [
+    "jboss"
+  ],
+  "clones": {},
+  "tools": {},
+  "groups": {},
+  "router": null,
+  "controller": {
+    "addresses": {
+      "lab": "10.61.41.253"
+    }
+  },
+  "published": [
+    {
+      "machine": "jboss",
+      "port": 8080,
+      "host_port": 8080
+    }
+  ],
+  "targets": {
+    "possible": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "generated": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "refused": {},
+    "not_possible": {
+      "hybrid": "only when some machines are containers and others are VMs",
+      "vagrant": "needs `vm:` on jboss",
+      "proxmox": "needs `vm:` on jboss",
+      "cloud-vm": "needs `vm:` on jboss",
+      "external": "needs `external:` on jboss"
+    }
+  },
+  "checks": {
+    "default_position": "networks",
+    "positions": [
+      {
+        "position": "networks",
+        "machine": null,
+        "runner": "isoloom-check",
+        "checks": [
+          {
+            "name": "JBoss answers",
+            "derived": false,
+            "kind": "http",
+            "target": "http://jboss:8080/",
+            "expect": "200",
+            "wait": 300
+          },
+          {
+            "name": "the HTTP invoker servlet is deployed",
+            "derived": false,
+            "kind": "script",
+            "target": "checks/invoker.sh",
+            "expect": "",
+            "wait": 120
+          }
+        ]
+      },
+      {
+        "position": "jboss",
+        "machine": "jboss",
+        "runner": "isoloom-check-jboss",
+        "checks": [
+          {
+            "name": "no internet from jboss",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      }
+    ]
+  },
+  "message": "JBoss AS 6.1.0 answers at http://localhost:8080/.\nWhat does /invoker/JMXInvokerServlet expect in a request body?\n"
+}
