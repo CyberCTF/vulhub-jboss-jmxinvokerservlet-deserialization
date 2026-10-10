@@ -13,8 +13,13 @@ services:
     networks:
       lab:
         ipv4_address: 10.61.41.10
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
     ports:
     - ${ISOLOOM_PUBLISH_ADDRESS:-127.0.0.1}:${ISOLOOM_PUBLISH_FIXED:+8080}:8080
+    volumes:
+    - jboss-ctf:/ctf
+    - isoloom-probe-amd64:/.isoloom-probe:ro
     healthcheck:
       test:
       - CMD
@@ -26,8 +31,6 @@ services:
       timeout: 3s
       retries: 60
       start_period: 10s
-    volumes:
-    - isoloom-probe-amd64:/.isoloom-probe:ro
     depends_on:
       isoloom-probe-amd64:
         condition: service_completed_successfully
@@ -64,6 +67,26 @@ services:
     labels:
       isoloom.managed: 'true'
       isoloom.environment: vulhub-jboss-jmxinvokerservlet-deserialization
+  jboss-init-1:
+    image: vulhub/jboss:as-6.1.0
+    entrypoint:
+    - /bin/sh
+    - /isoloom/init/flag.sh
+    volumes:
+    - ../../ctf/flag.sh:/isoloom/init/flag.sh:ro
+    - jboss-ctf:/ctf
+    network_mode: service:jboss
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
+    depends_on:
+      jboss:
+        condition: service_healthy
+      jboss-routes:
+        condition: service_healthy
+    restart: no
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-jboss-jmxinvokerservlet-deserialization
   isoloom-check:
     image: curlimages/curl:8.11.1
     profiles:
@@ -83,6 +106,8 @@ services:
     depends_on:
       jboss:
         condition: service_healthy
+      jboss-init-1:
+        condition: service_completed_successfully
       jboss-routes:
         condition: service_healthy
     labels:
@@ -101,6 +126,8 @@ services:
     depends_on:
       jboss:
         condition: service_healthy
+      jboss-init-1:
+        condition: service_completed_successfully
       jboss-routes:
         condition: service_healthy
     labels:
@@ -130,6 +157,10 @@ networks:
       isoloom.managed: 'true'
       isoloom.environment: vulhub-jboss-jmxinvokerservlet-deserialization
 volumes:
+  jboss-ctf:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-jboss-jmxinvokerservlet-deserialization
   isoloom-probe-amd64:
     labels:
       isoloom.managed: 'true'

@@ -1,0 +1,64 @@
+{
+  "objectives": [
+    {
+      "key": "main",
+      "title": "Read the flag",
+      "prompt": "Exploit the JMXInvokerServlet deserialization to run commands on JBoss and read /ctf/flag.",
+      "check": {
+        "evidence": "SECRET",
+        "format": "FLAG{%s}"
+      },
+      "dev": "FLAG{dev-vulhub-jboss-jmxinvokerservlet-deserialization}",
+      "hints": [
+        "/invoker/JMXInvokerServlet accepts serialised Java objects over HTTP and deserialises them.",
+        "Look at the libraries in JBoss AS 6.1.0's lib directory. The flag is at /ctf/flag."
+      ],
+      "steps": [
+        {
+          "key": "version",
+          "title": "Identify the product",
+          "prompt": "Which version of JBoss AS does the server run? (number only)",
+          "check": {
+            "answer_regex": "6\\.1\\.0"
+          }
+        },
+        {
+          "key": "path",
+          "title": "Find the entry point",
+          "prompt": "Which servlet path is the entry point? (path)",
+          "check": {
+            "answer": [
+              "/invoker/jmxinvokerservlet",
+              "invoker/jmxinvokerservlet",
+              "jmxinvokerservlet"
+            ]
+          }
+        },
+        {
+          "key": "service",
+          "title": "Name the service",
+          "prompt": "Which management technology does that servlet front? (acronym)",
+          "check": {
+            "answer": [
+              "jmx"
+            ]
+          }
+        },
+        {
+          "key": "class",
+          "title": "Name the weakness",
+          "prompt": "Which vulnerability class is this?",
+          "check": {
+            "answer": [
+              "deserialization",
+              "java deserialization",
+              "insecure deserialization",
+              "deserialisation",
+              "insecure deserialisation"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
