@@ -1,1 +1,11 @@
-{"title": "JBoss JMXInvokerServlet Deserialization RCE", "description": "JBoss Application Server 6.1.0 with the HTTP invoker deployed: /invoker/JMXInvokerServlet deserializes the body of any POST without authentication, so a Commons Collections gadget chain (CVE-2015-7501) runs commands.", "question": "Exploit the JMXInvokerServlet deserialization to run commands on the JBoss server and read /ctf/flag.", "category": "WEB", "difficulty": 3, "evidence_kind": "SECRET"}
+{
+  "project_name": "cyberlabs-vulhub-jboss-jmxinvokerservlet-deserialization",
+  "slug": "vulhub-jboss-jmxinvokerservlet-deserialization",
+  "title": "JBoss JMXInvokerServlet Deserialization RCE",
+  "description": "JBoss Application Server 6.1.0 with the HTTP invoker deployed: /invoker/JMXInvokerServlet deserializes the body of any POST without authentication, so a Commons Collections gadget chain (CVE-2015-7501) runs commands.",
+  "category": "web",
+  "difficulty": 3,
+  "evidence_kind": "SECRET",
+  "capabilities": [],
+  "question": "Exploit the JMXInvokerServlet deserialization to run commands on the JBoss server and read /ctf/flag."
+}
